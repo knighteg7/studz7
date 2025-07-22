@@ -1,11 +1,14 @@
 const mysql = require('mysql2/promise');
 require('dotenv').config();
 
-console.log('🔧 إعدادات قاعدة البيانات:');
-console.log('DB_HOST:', process.env.DB_HOST);
-console.log('DB_USER:', process.env.DB_USER);
-console.log('DB_NAME:', process.env.DB_NAME);
-console.log('DB_PASSWORD:', process.env.DB_PASSWORD ? '[محدد]' : '[فارغ]');
+// إعدادات قاعدة البيانات للإنتاج
+if (process.env.NODE_ENV === 'production') {
+  console.log('🔧 إعدادات قاعدة البيانات (الإنتاج):');
+  console.log('DB_HOST:', process.env.DB_HOST);
+  console.log('DB_USER:', process.env.DB_USER);
+  console.log('DB_NAME:', process.env.DB_NAME);
+  console.log('DB_PASSWORD:', process.env.DB_PASSWORD ? '[محدد]' : '[فارغ]');
+}
 
 // إعدادات قاعدة البيانات
 const dbConfig = {
@@ -15,23 +18,27 @@ const dbConfig = {
   database: process.env.DB_NAME || 'attendance_system',
   charset: 'utf8mb4',
   timezone: '+00:00',
-  acquireTimeout: 60000,
-  timeout: 60000,
+  acquireTimeout: 120000,
+  timeout: 120000,
   reconnect: true,
   multipleStatements: true,
   supportBigNumbers: true,
   bigNumberStrings: true,
-  dateStrings: false
+  dateStrings: false,
+  // إعدادات SSL للإنتاج
+  ssl: process.env.NODE_ENV === 'production' ? {
+    rejectUnauthorized: false
+  } : false
 };
 
 // إنشاء pool للاتصالات
 const pool = mysql.createPool({
   ...dbConfig,
   waitForConnections: true,
-  connectionLimit: 10,
+  connectionLimit: process.env.NODE_ENV === 'production' ? 5 : 10,
   queueLimit: 0,
-  acquireTimeout: 60000,
-  timeout: 60000
+  acquireTimeout: 120000,
+  timeout: 120000
 });
 
 // معالجة أحداث Pool

@@ -11,6 +11,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "start": "node server/server.js",
+    "start:frontend": "npm run build && npm run preview",
+    "postinstall": "npm run build",
     "db:setup": "mysql -u root -p < database/attendance_system.sql",
     "whatsapp:init": "node scripts/init-whatsapp.js",
     "whatsapp:test": "node scripts/test-whatsapp.js",

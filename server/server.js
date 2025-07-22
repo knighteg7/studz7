@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
 require('dotenv').config();
 
 const { testConnection } = require('./config/database');
@@ -13,9 +14,20 @@ console.log('🚀 بدء تشغيل خادم نظام إدارة الحضور...
 console.log('📍 المنفذ:', PORT);
 console.log('🌍 البيئة:', process.env.NODE_ENV || 'development');
 
+// إنشاء المجلدات المطلوبة
+const requiredDirs = ['./tokens', './logs'];
+requiredDirs.forEach(dir => {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+    console.log(`📁 تم إنشاء المجلد: ${dir}`);
+  }
+});
+
 // Middleware
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:3000'],
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://attendance-system-frontend.onrender.com', 'https://attendance-system-backend.onrender.com']
+    : ['http://localhost:5173', 'http://localhost:3000'],
   credentials: true
 }));
 app.use(express.json());

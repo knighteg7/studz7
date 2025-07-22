@@ -127,9 +127,17 @@ class WhatsAppService {
               '--disable-extensions',
               '--disable-plugins',
               '--disable-default-apps',
-              '--disable-background-networking'
+              '--disable-background-networking',
+              // إعدادات إضافية للإنتاج على Render
+              '--disable-dev-shm-usage',
+              '--disable-software-rasterizer',
+              '--disable-background-timer-throttling',
+              '--disable-backgrounding-occluded-windows',
+              '--disable-renderer-backgrounding',
+              '--disable-features=TranslateUI',
+              '--disable-ipc-flooding-protection'
             ],
-            executablePath: process.env.CHROME_PATH || 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+            executablePath: process.env.CHROME_PATH || (process.env.NODE_ENV === 'production' ? '/usr/bin/google-chrome' : 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'),
             defaultViewport: null,
             ignoreHTTPSErrors: true,
             slowMo: 0
